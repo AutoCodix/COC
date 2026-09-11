@@ -1,0 +1,38 @@
+name: Build Granule Effects v0.2 fixed 2
+
+on:
+  push:
+    branches:
+      - granule-effects-v02-build2
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract source
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path extracted | Out-Null
+          tar -xf granule-effects-v02-source.zip -C extracted
+
+      - name: Configure
+        shell: pwsh
+        run: cmake -S extracted/GranuleEffects-v0.2 -B build -A x64
+
+      - name: Build
+        shell: pwsh
+        run: cmake --build build --config Release
+
+      - name: Stage
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifact | Out-Null
+          Copy-Item build/Release/GranuleEffects.exe artifact/GranuleEffects.exe
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: GranuleEffects-v0.2-win64-fixed2
+          path: artifact/GranuleEffects.exe
