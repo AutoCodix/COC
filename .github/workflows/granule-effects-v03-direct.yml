@@ -11,17 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Rebuild source
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path granule-v03-direct/src | Out-Null
-          $b64 = ''
-          0..6 | ForEach-Object {
-            $name = ('granule-v03-parts/main.{0:D2}.b64' -f $_)
-            $b64 += (Get-Content -Raw $name).Trim()
-          }
-          [IO.File]::WriteAllBytes('granule-v03-direct/src/main.cpp', [Convert]::FromBase64String($b64))
-
       - name: Configure
         shell: pwsh
         run: cmake -S granule-v03-direct -B build-v03 -A x64
