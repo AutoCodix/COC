@@ -1,0 +1,27 @@
+name: Build Granule Effects
+
+on:
+  push:
+    branches: [granule-effects-build]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S granule-effects -B granule-effects/build -A x64
+      - name: Build
+        run: cmake --build granule-effects/build --config Release
+      - name: Stage
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path out | Out-Null
+          Copy-Item granule-effects/build/Release/GranuleEffects.exe out/GranuleEffects.exe
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: GranuleEffects-win64
+          path: out/GranuleEffects.exe
+          if-no-files-found: error
