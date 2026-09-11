@@ -18,11 +18,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.3.0'
-      - name: Unpack source
+      - name: Rebuild source archive
         run: |
+          cat ci.part.00 ci.part.01 ci.part.02 ci.part.03 | base64 -d > source.zip
+          unzip -t source.zip
           rm -rf "$RUNNER_TEMP/the-seen-src"
           mkdir -p "$RUNNER_TEMP/the-seen-src"
-          unzip -q the-seen-ci-text.zip -d "$RUNNER_TEMP/the-seen-src"
+          unzip -q source.zip -d "$RUNNER_TEMP/the-seen-src"
       - name: Build
         run: gradle -p "$RUNNER_TEMP/the-seen-src" build --stacktrace
       - name: Upload jars
