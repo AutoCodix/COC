@@ -1,0 +1,28 @@
+name: Build Granule Effects v0.2 direct
+
+on:
+  push:
+    branches:
+      - granule-effects-v02-build2
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        shell: pwsh
+        run: cmake -S granule-effects-v02-direct -B build-direct -A x64
+      - name: Build
+        shell: pwsh
+        run: cmake --build build-direct --config Release
+      - name: Stage
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifact-direct | Out-Null
+          Copy-Item build-direct/Release/GranuleEffects.exe artifact-direct/GranuleEffects.exe
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: GranuleEffects-v0.2-direct-win64
+          path: artifact-direct/GranuleEffects.exe
