@@ -25,6 +25,7 @@ jobs:
           rm -rf "$RUNNER_TEMP/the-seen-src"
           mkdir -p "$RUNNER_TEMP/the-seen-src"
           unzip -q source.zip -d "$RUNNER_TEMP/the-seen-src"
+          sed -i 's/protected boolean shouldDropXp()/public boolean shouldDropXp()/' "$RUNNER_TEMP/the-seen-src/src/main/java/dev/theseen/entity/TheSeenEntity.java"
       - name: Build
         run: gradle -p "$RUNNER_TEMP/the-seen-src" build --stacktrace
       - name: Upload jars
