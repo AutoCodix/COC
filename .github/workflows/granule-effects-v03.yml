@@ -1,0 +1,40 @@
+name: Build Granule Effects v0.3
+
+on:
+  push:
+    branches:
+      - granule-effects-v03-build-2
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract source
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path extracted | Out-Null
+          Expand-Archive -Path granule-effects-v03-source.zip -DestinationPath extracted -Force
+
+      - name: Configure
+        shell: pwsh
+        run: |
+          cmake -S extracted/GranuleEffects-v0.3 -B build -A x64
+
+      - name: Build
+        shell: pwsh
+        run: |
+          cmake --build build --config Release
+
+      - name: Stage
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifact | Out-Null
+          Copy-Item build/Release/GranuleEffects.exe artifact/GranuleEffects-v0.3.exe
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: GranuleEffects-v0.3-win64
+          path: artifact/GranuleEffects-v0.3.exe
