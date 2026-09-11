@@ -11,17 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract source
+      - name: Rebuild source
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path extracted | Out-Null
-          7z x granule-effects-v03-source.zip -oextracted -y
-          if ($LASTEXITCODE -ne 0) { throw "7z extraction failed" }
+          New-Item -ItemType Directory -Force -Path granule-v03-direct/src | Out-Null
+          $b64 = (Get-Content granule-v03-parts/main.b64.0 -Raw) + (Get-Content granule-v03-parts/main.b64.1 -Raw) + (Get-Content granule-v03-parts/main.b64.2 -Raw) + (Get-Content granule-v03-parts/main.b64.3 -Raw)
+          [IO.File]::WriteAllBytes('granule-v03-direct/src/main.cpp',[Convert]::FromBase64String($b64))
 
       - name: Configure
         shell: pwsh
         run: |
-          cmake -S extracted/GranuleEffects-v0.3 -B build -A x64
+          cmake -S granule-v03-direct -B build -A x64
 
       - name: Build
         shell: pwsh
