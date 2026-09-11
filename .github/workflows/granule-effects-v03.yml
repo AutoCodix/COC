@@ -15,7 +15,8 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path extracted | Out-Null
-          Expand-Archive -Path granule-effects-v03-source.zip -DestinationPath extracted -Force
+          7z x granule-effects-v03-source.zip -oextracted -y
+          if ($LASTEXITCODE -ne 0) { throw "7z extraction failed" }
 
       - name: Configure
         shell: pwsh
